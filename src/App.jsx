@@ -7,8 +7,8 @@ function App() {
   const [prevNum, setPrev] = useState("");
   const [operator, setOperator] = useState("");
   const [result, setResult] = useState("");
-  console.log(prevNum);
-  console.log(currentNum);
+  console.log(`numero atual ${currentNum}`);
+  console.log(`numero anterior ${prevNum}`);
   console.log(`resultado ${result}`);
 
   const handleAddNumber = (ele) => {
