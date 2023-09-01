@@ -1,6 +1,10 @@
 import { useState } from "react";
 const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."];
-const signs = ["%", "/", "X", "-", "+"];
+const signs = ["/", "X", "-", "+"];
+// Função para formatar um número com separadores de milhar
+const formatNumberWithCommas = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 function App() {
   const [currentNum, setCurrentNum] = useState("0");
@@ -8,44 +12,70 @@ function App() {
   const [operator, setOperator] = useState("");
   const [result, setResult] = useState("");
 
+  console.log(`numero atual ${currentNum} ${typeof currentNum}`);
+  console.log(`numero anterior ${prevNum} ${typeof prevNum}`);
+  console.log(`resultado ${result} ${typeof result}`);
+  console.log(`operador ${operator}`);
+
   const handleAddNumber = (ele) => {
+    console.log("handleAddNumber executado");
     setCurrentNum((prev) => {
-      const fullValue = prev + ele;
-      if (currentNum === "0") {
-        return ele;
+      let newValue = prev === "0" && ele !== "." ? ele : prev + ele;
+
+      if (newValue.startsWith("00")) {
+        newValue = newValue.substring(1);
       }
-      if (Number(currentNum) % 1 === 0) {
-        return prev + ele;
+
+      if (newValue === ".") {
+        newValue = "0" + newValue;
       }
-      if (fullValue.includes(",")) {
-        const newValue = fullValue.replace(/,/g, ".");
-        return newValue;
+
+      // Verifique se há mais de um ponto decimal e remova extras
+      const parts = newValue.split(".");
+      if (parts.length > 2) {
+        newValue = parts[0] + "." + parts.slice(1).join("");
       }
-      return fullValue;
+
+      return newValue;
     });
   };
 
   const handleDeleteNumber = () => {
+    console.log("handleDeleteNumber executado");
     setCurrentNum((prev) => {
+      if (currentNum === "0") {
+        // Não faça nada se currentNum já for "0"
+        return prev;
+      }
       const deleteNumber = prev.slice(0, -1);
-      return deleteNumber;
+      return deleteNumber === "" ? "0" : deleteNumber;
     });
   };
 
   const handleSign = () => {
-    if (Number(currentNum) > 0) {
+    console.log("handleSign executado");
+    if (parseFloat(currentNum) > 0) {
       setCurrentNum((prev) => `-${prev}`);
     }
   };
 
+  const handlePercentage = () => {
+    console.log("handlePercentage executado");
+    if (currentNum !== "") {
+      setCurrentNum((prev) => (parseFloat(prev) / 100).toString());
+    }
+  };
+
   const handleClear = () => {
+    console.log("handleClear executado");
     setPrevNum("");
-    setCurrentNum("");
+    setCurrentNum("0");
     setResult("");
     setOperator("");
   };
 
   const handleOperator = (ele) => {
+    console.log("handleOperator executado");
     if (result) {
       setOperator(ele);
       setCurrentNum("");
@@ -53,13 +83,19 @@ function App() {
       setResult("");
       return;
     }
+
     setOperator(ele);
     setPrevNum(currentNum);
     setCurrentNum("");
   };
 
   const evaluateHandler = () => {
+    console.log("evaluateHandler executado");
+
+    if (!prevNum || !currentNum || !operator) return;
+
     let resultValue;
+
     switch (operator) {
       case "/":
         resultValue = parseFloat(prevNum) / parseFloat(currentNum);
@@ -86,17 +122,24 @@ function App() {
   return (
     <div>
       <p>
-        {prevNum === "" ? "" : prevNum} {operator}{" "}
-        {result !== "" ? `${currentNum} =` : ""}
+        {prevNum === "" ? "" : formatNumberWithCommas(prevNum)} {operator}{" "}
+        {result !== ""
+          ? `${currentNum && formatNumberWithCommas(currentNum) + " ="}`
+          : ""}
       </p>
       {result === "" ? (
-        <p>{currentNum === "" ? prevNum : currentNum}</p>
+        <p>
+          {currentNum === ""
+            ? formatNumberWithCommas(prevNum)
+            : formatNumberWithCommas(currentNum)}
+        </p>
       ) : (
-        <p>{result}</p>
+        <p>{formatNumberWithCommas(result)}</p>
       )}
       <button onClick={() => handleClear()}>AC</button>
       <button onClick={() => handleSign()}>+/-</button>
       <button onClick={() => handleDeleteNumber()}>DEL</button>
+      <button onClick={() => handlePercentage()}>%</button>
 
       {numbers.map((ele, index) => (
         <button key={index} onClick={() => handleAddNumber(ele)}>
