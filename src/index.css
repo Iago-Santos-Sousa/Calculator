@@ -12,13 +12,15 @@ body {
 
 #root {
   height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .wrapper {
-  width: 400px;
+  max-width: min(80%, 400px);
+  width: 80%;
   padding: 0.5em;
   background-color: #c4c4c4;
   color: #000;
