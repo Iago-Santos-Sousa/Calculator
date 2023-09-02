@@ -175,10 +175,10 @@ function App() {
           {formatNumberWithCommas(result)}
         </p>
       )}
-      <button onClick={() => handleClear()}>AC</button>
-      <button onClick={() => handleSign()}>+/-</button>
-      <button onClick={() => handleDeleteNumber()}>DEL</button>
       <button onClick={() => handlePercentage()}>%</button>
+      <button onClick={() => handleClear()}>CE</button>
+      <button onClick={() => handleDeleteNumber()}>DEL</button>
+      <button onClick={() => handleSign()}>+/-</button>
 
       {numbers.map((ele, index) => (
         <button key={index} onClick={() => handleAddNumber(ele)}>
