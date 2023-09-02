@@ -57,6 +57,13 @@ function App() {
         return prev;
       }
       const deleteNumber = prev.slice(0, -1);
+      if (result) {
+        setCurrentNum("");
+        setPrevNum("");
+        setOperator("");
+        return;
+      }
+
       return deleteNumber === "" ? "0" : deleteNumber;
     });
   };
@@ -65,6 +72,12 @@ function App() {
     console.log("handleSign executado");
     if (parseFloat(currentNum) > 0) {
       setCurrentNum((prev) => `-${prev}`);
+      if (currentNum && result) {
+        setCurrentNum(`-${result}`);
+        setPrevNum("");
+        setOperator("");
+        setResult("");
+      }
     }
   };
 
@@ -102,6 +115,9 @@ function App() {
       setPrevNum(currentNum);
     } else {
       console.log("aqui foi exec");
+      if (operator === ele) {
+        return;
+      }
       setOperator(ele);
       setPrevNum(currentNum);
       setCurrentNum("");
@@ -110,13 +126,15 @@ function App() {
 
   const evaluateHandler = () => {
     console.log("evaluateHandler executado");
-
     if (!prevNum || !currentNum || !operator) return;
-
     let resultValue;
 
     switch (operator) {
       case "/":
+        if (parseFloat(currentNum) === 0) {
+          setResult("Error: Division by zero");
+          return;
+        }
         resultValue = parseFloat(prevNum) / parseFloat(currentNum);
         setResult(resultValue.toString());
         break;
@@ -153,7 +171,9 @@ function App() {
             : formatNumberWithCommas(currentNum)}
         </p>
       ) : (
-        <p style={{ fontSize: "40px" }}>{formatNumberWithCommas(result)}</p>
+        <p style={{ fontSize: "40px", color: "red" }}>
+          {formatNumberWithCommas(result)}
+        </p>
       )}
       <button onClick={() => handleClear()}>AC</button>
       <button onClick={() => handleSign()}>+/-</button>
