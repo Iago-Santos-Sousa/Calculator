@@ -176,7 +176,7 @@ function App() {
         </p>
       )}
       <button onClick={() => handlePercentage()}>%</button>
-      <button onClick={() => handleClear()}>CE</button>
+      <button onClick={() => handleClear()}>C</button>
       <button onClick={() => handleDeleteNumber()}>DEL</button>
       <button onClick={() => handleSign()}>+/-</button>
 
