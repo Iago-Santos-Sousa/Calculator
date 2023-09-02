@@ -1,6 +1,7 @@
 import { useState } from "react";
 const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."];
 const signs = ["/", "X", "-", "+"];
+
 // Função para formatar um número com separadores de milhar
 const formatNumberWithCommas = (number) => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -20,6 +21,7 @@ function App() {
   const handleAddNumber = (ele) => {
     console.log("handleAddNumber executado");
     setCurrentNum((prev) => {
+      console.log("valor naterior da função handleAddNumber" + " " + prev);
       let newValue = prev === "0" && ele !== "." ? ele : prev + ele;
 
       if (newValue.startsWith("00")) {
@@ -34,6 +36,13 @@ function App() {
       const parts = newValue.split(".");
       if (parts.length > 2) {
         newValue = parts[0] + "." + parts.slice(1).join("");
+      }
+
+      if (currentNum && result) {
+        setPrevNum("");
+        setOperator("");
+        setResult("");
+        return ele;
       }
 
       return newValue;
@@ -76,7 +85,9 @@ function App() {
 
   const handleOperator = (ele) => {
     console.log("handleOperator executado");
+
     if (result) {
+      console.log("Aqui foi exec");
       setOperator(ele);
       setCurrentNum("");
       setPrevNum(result);
@@ -84,9 +95,17 @@ function App() {
       return;
     }
 
-    setOperator(ele);
-    setPrevNum(currentNum);
-    setCurrentNum("");
+    if (currentNum === "0") {
+      console.log("aqui foi exec");
+      setCurrentNum("0");
+      setOperator(ele);
+      setPrevNum(currentNum);
+    } else {
+      console.log("aqui foi exec");
+      setOperator(ele);
+      setPrevNum(currentNum);
+      setCurrentNum("");
+    }
   };
 
   const evaluateHandler = () => {
@@ -121,20 +140,20 @@ function App() {
 
   return (
     <div>
-      <p>
+      <p className="preview-values">
         {prevNum === "" ? "" : formatNumberWithCommas(prevNum)} {operator}{" "}
         {result !== ""
           ? `${currentNum && formatNumberWithCommas(currentNum) + " ="}`
           : ""}
       </p>
       {result === "" ? (
-        <p>
+        <p style={{ fontSize: "40px", color: "red" }}>
           {currentNum === ""
             ? formatNumberWithCommas(prevNum)
             : formatNumberWithCommas(currentNum)}
         </p>
       ) : (
-        <p>{formatNumberWithCommas(result)}</p>
+        <p style={{ fontSize: "40px" }}>{formatNumberWithCommas(result)}</p>
       )}
       <button onClick={() => handleClear()}>AC</button>
       <button onClick={() => handleSign()}>+/-</button>
