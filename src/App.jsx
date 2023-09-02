@@ -4,6 +4,7 @@ import Screen from "./components/Screen";
 import ButtonBox from "./components/ButtonBox";
 import { btnValues } from "./utils/btnValues";
 import Button from "./components/Button";
+let currentpercentage;
 
 function App() {
   const [currentNum, setCurrentNum] = useState("0");
@@ -11,6 +12,7 @@ function App() {
   const [operator, setOperator] = useState("");
   const [result, setResult] = useState("");
   const [divisionZero, setDivisionZero] = useState(false);
+  const [showPercentage, setShowPercentage] = useState(false);
 
   console.log(`numero atual ${currentNum} ${typeof currentNum}`);
   console.log(`numero anterior ${prevNum} ${typeof prevNum}`);
@@ -99,13 +101,25 @@ function App() {
 
   const handlePercentage = () => {
     console.log("handlePercentage executado");
+
     if (!prevNum) {
-      setPrevNum(currentNum);
-      setCurrentNum("0");
+      console.log("aqui foi exec");
+      setPrevNum((prev) => prev);
+      setCurrentNum((prev) => prev);
       return;
-    }
-    if (currentNum !== "0") {
-      setCurrentNum((prev) => (parseFloat(prev) / 100).toString());
+    } else {
+      console.log("aqui foi exec");
+      setShowPercentage(true);
+      // setCurrentNum((prev) => (parseFloat(prev) / 100).toString());
+
+      const percentageValue =
+        (parseFloat(prevNum) * parseFloat(currentNum)) / 100;
+      setResult(percentageValue.toString());
+      console.log(currentNum);
+      currentpercentage = currentNum;
+      setPrevNum("");
+      setOperator("");
+      setCurrentNum(percentageValue.toString());
     }
   };
 
@@ -134,7 +148,7 @@ function App() {
       console.log("aqui foi exec bla");
       setCurrentNum(currentNum);
       setOperator(ele);
-      // setPrevNum(currentNum);
+      setPrevNum(currentNum);
     } else {
       console.log("aqui foi exec");
       if (operator === ele) {
@@ -147,9 +161,17 @@ function App() {
   };
 
   const evaluateHandler = () => {
-    console.log("evaluateHandler executado");
-    if (!prevNum || !currentNum || !operator) return;
     let resultValue;
+    console.log("evaluateHandler executado");
+    if (!prevNum && !currentNum && !operator) return;
+    if (showPercentage) {
+      console.log(`valor do numero atual da porcentagem ${currentNum}`);
+      resultValue = parseFloat(currentNum) * parseFloat(currentpercentage);
+      setResult(resultValue.toString());
+      setPrevNum(currentpercentage);
+      setOperator("X");
+      setShowPercentage(false);
+    }
 
     switch (operator) {
       case "/":
